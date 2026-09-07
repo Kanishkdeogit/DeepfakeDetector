@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deepfake Face Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'detector/style.css' %}">
+</head>
+<body>
+  <main class="sheet">
+    <header class="sheet__header">
+      <h1 class="sheet__title">Deepfake face analysis</h1>
+      <p class="sheet__subtitle">
+        Custom CNN trained on Celeb-DF v2, evaluated with a subject-disjoint,
+        video-level train/validation split to avoid frame-leakage inflation.
+      </p>
+    </header>
+
+    <section class="section">
+      <p class="section__label">Upload</p>
+
+      {% if model_error %}
+        <div class="alert">Model unavailable: {{ model_error }}</div>
+      {% else %}
+        <form method="post" enctype="multipart/form-data" id="upload-form">
+          {% csrf_token %}
+          <div class="dropzone" id="dropzone">
+            <p class="dropzone__prompt">Drop a face image here, or choose a file — JPG or PNG.</p>
+            <label class="file-button">
+              Choose file
+              <input type="file" name="image" id="id_image" accept="image/*" style="display:none;">
+            </label>
+            <div class="dropzone__filename" id="filename-display"></div>
+          </div>
+
+          {% if form.image.errors %}
+            <div class="field-error">{{ form.image.errors.0 }}</div>
+          {% endif %}
+
+          <div class="submit-row">
+            <button type="submit" class="submit-button">Analyze image</button>
+          </div>
+        </form>
+      {% endif %}
+    </section>
+
+    {% if result %}
+    <section class="section">
+      <p class="section__label">Result</p>
+      <div class="result">
+        <img src="{{ preview_data_uri }}" alt="Uploaded face" class="result__image">
+        <div class="result__panel">
+          {% if result.verdict == "authentic" %}
+            <div class="stamp stamp--authentic">Likely authentic</div>
+          {% else %}
+            <div class="stamp stamp--manipulated">Likely manipulated</div>
+          {% endif %}
+
+          <div class="readout">
+            <div class="readout__row">
+              <span class="readout__label">authentic</span>
+              <span class="readout__meter">
+                <span class="readout__meter-fill readout__meter-fill--real" style="width: {{ result.real_pct }}%;"></span>
+              </span>
+              <span class="readout__value">{{ result.real_pct }}%</span>
+            </div>
+            <div class="readout__row">
+              <span class="readout__label">manipulated</span>
+              <span class="readout__meter">
+                <span class="readout__meter-fill readout__meter-fill--fake" style="width: {{ result.fake_pct }}%;"></span>
+              </span>
+              <span class="readout__value">{{ result.fake_pct }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="section">
+      <p class="section__label">Model notes</p>
+      <div class="notes">
+        {% if val_f1 %}<div><strong>Validation macro F1:</strong> {{ val_f1|floatformat:4 }}</div>{% endif %}
+        {% if val_auc %}<div><strong>Validation AUC-ROC:</strong> {{ val_auc|floatformat:4 }}</div>{% endif %}
+        <div style="margin-top: 10px;">
+          This is a research/portfolio demo, not a certified forensic tool.
+          Deepfake detectors trained on one dataset are known to generalize
+          imperfectly to images from different sources, lighting, compression,
+          or generation methods.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const input = document.getElementById('id_image');
+    const filenameDisplay = document.getElementById('filename-display');
+    const dropzone = document.getElementById('dropzone');
+
+    input.addEventListener('change', () => {
+      if (input.files.length > 0) {
+        filenameDisplay.textContent = input.files[0].name;
+      }
+    });
+
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('is-dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('is-dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        input.files = files;
+        filenameDisplay.textContent = files[0].name;
+      }
+    });
+  </script>
+</body>
+</html>

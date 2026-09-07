@@ -1,0 +1,264 @@
+:root {
+  --paper: #eceef1;
+  --panel: #ffffff;
+  --ink: #1b2024;
+  --muted: #5b6470;
+  --line: #c9cdd2;
+  --accent: #33418f;
+  --real: #2f6f4e;
+  --fake: #a4402a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 48px 20px 80px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Space Grotesk", sans-serif;
+  line-height: 1.5;
+}
+
+.sheet {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.sheet__header {
+  padding: 32px 36px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sheet__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sheet__subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  max-width: 46ch;
+}
+
+.section {
+  padding: 28px 36px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.section__label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+/* Upload dropzone */
+.dropzone {
+  border: 1px dashed var(--line);
+  padding: 28px 20px;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.dropzone.is-dragover {
+  border-color: var(--accent);
+  background: #f4f5fb;
+}
+
+.dropzone__prompt {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.dropzone__filename {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  color: var(--ink);
+  margin-top: 12px;
+  min-height: 18px;
+}
+
+.file-button {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--panel);
+  border: none;
+  padding: 10px 20px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.file-button:hover {
+  background: var(--accent);
+}
+
+.submit-row {
+  margin-top: 18px;
+  text-align: right;
+}
+
+.submit-button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 11px 24px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background: #29357a;
+}
+
+.field-error {
+  color: var(--fake);
+  font-size: 13px;
+  margin-top: 10px;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+/* Result layout */
+.result {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.result__image {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.result__panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.stamp {
+  display: inline-block;
+  border: 2px solid var(--ink);
+  padding: 6px 16px;
+  font-weight: 600;
+  font-size: 15px;
+  transform: rotate(-1.2deg);
+  margin-bottom: 18px;
+}
+
+.stamp--authentic {
+  border-color: var(--real);
+  color: var(--real);
+}
+
+.stamp--manipulated {
+  border-color: var(--fake);
+  color: var(--fake);
+}
+
+.readout {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+}
+
+.readout__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.readout__label {
+  width: 78px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.readout__meter {
+  flex: 1;
+  height: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  position: relative;
+}
+
+.readout__meter-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: var(--ink);
+}
+
+.readout__meter-fill--real {
+  background: var(--real);
+}
+
+.readout__meter-fill--fake {
+  background: var(--fake);
+}
+
+.readout__value {
+  width: 48px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Footer / model notes */
+.notes {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.notes strong {
+  color: var(--ink);
+}
+
+.alert {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  color: var(--fake);
+  border: 1px solid var(--fake);
+  padding: 14px 16px;
+}
+
+@media (max-width: 560px) {
+  body {
+    padding: 24px 12px 60px;
+  }
+
+  .sheet__header,
+  .section {
+    padding: 22px 20px;
+  }
+
+  .result {
+    flex-direction: column;
+  }
+
+  .result__image {
+    width: 100%;
+    height: auto;
+    max-height: 240px;
+  }
+}
